@@ -1,4 +1,6 @@
 """ Provide Command Line Interface handling using Click. """
+from typing import BinaryIO
+
 import click
 
 from pigeon_cli import api
@@ -11,7 +13,7 @@ def run():
 
 @run.command()
 @click.argument("file", type=click.File())
-def share(file: file):
+def share(file: BinaryIO):
     """ Upload a file and recieve a link to share the file. """
     link = api.share(file)
     print(f"You can share the link: {link}")

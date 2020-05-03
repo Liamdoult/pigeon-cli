@@ -1,6 +1,6 @@
 """ Handle API interaction with the hosted pigeon services. """
 import re
-from typing import Tuple
+from typing import Tuple, BinaryIO
 
 import requests
 
@@ -63,7 +63,7 @@ def _get_upload_url() -> Tuple[str, str]:
     raise Exception(f"{jsn['error']}")
 
 
-def _upload_file(signed_url: str, file: file):
+def _upload_file(signed_url: str, file: BinaryIO):
     """ Upload the provided file to the signed url returned by the server. """
     results = requests.put(signed_url, data=file)
     if results.status_code != 200:
@@ -82,7 +82,7 @@ def get(link: str):
         file.write(_download_file(signed_url))
 
 
-def share(file: file) -> str:
+def share(file: BinaryIO) -> str:
     """ Upload a file to the service and return a reference URL.
 
     Args:
