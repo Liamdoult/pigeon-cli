@@ -1,6 +1,7 @@
+""" Provide Command Line Interface handling using Click. """
 import click
 
-import api
+from pigeon_cli import api
 
 
 @click.group()
@@ -17,8 +18,8 @@ def share(file):
 
 
 @run.command()
-@click.argument("input")
-def get(input):
+@click.argument("link")
+def get(link):
     """ Use a URL or ID to download a shared file. """
-    api.get(input)
+    api.get(link)
     print("Download complete")

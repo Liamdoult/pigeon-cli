@@ -1,5 +1,6 @@
-from setuptools import setup, find_packages
+""" Basic setup for Pigeon CLI """
 from os import path
+from setuptools import setup
 
 here = path.abspath(path.dirname(__file__))
 
@@ -11,7 +12,7 @@ setup(
     version='0.0.1',
     aution='Liam Doult',
     install_requires=[
-        'click',     
+        'click',
         'requests',
     ],
 )

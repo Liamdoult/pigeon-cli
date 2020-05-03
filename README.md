@@ -22,4 +22,3 @@ To download the shared file:
     python pigeon-cli get <shared ID or URL>
 
 This will create a file with the same name as the `ID` provided.
-
