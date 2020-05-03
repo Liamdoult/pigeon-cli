@@ -11,7 +11,7 @@ def run():
 
 @run.command()
 @click.argument("file", type=click.File())
-def share(file):
+def share(file: file):
     """ Upload a file and recieve a link to share the file. """
     link = api.share(file)
     print(f"You can share the link: {link}")
@@ -19,7 +19,7 @@ def share(file):
 
 @run.command()
 @click.argument("link")
-def get(link):
+def get(link: str):
     """ Use a URL or ID to download a shared file. """
     api.get(link)
     print("Download complete")
