@@ -1,3 +1,5 @@
+import re
+
 import requests
 
 API_URL = "https://europe-west2-sharebin-1584549443764.cloudfunctions.net/api"
@@ -37,6 +39,49 @@ def share(file):
     return f"https://pigeon.ventures/{id}"
 
 
-def get(url):
+def _get_download_url(id):
+    """ Authenticate the service and get the google file download link. """
+    result = requests.get(f"{API_URL}?id={id}")
+    jsn = result.json()
+
+    if result.status_code == 200:
+        signed_url = jsn['signedUrl'][0]
+
+        return signed_url
+    else:
+        raise Exception(f"{jsn['error']}")
+
+def _download_file(signed_url):
+    """ Authenticate the service and get the google file download link. """
+    result = requests.get(signed_url)
+
+    if result.status_code == 200:
+        return result.content
+    else:
+        raise Exception(f"Failed to download file!")
+    
+
+def _extract_id(input):
+    """ Perform validation on the inputed URL or ID used for downloading the
+    file.
+    
+    """
+    url_extractor = re.compile("^(http(s)?:\/\/)?pigeon\.ventures\/(?P<id>[a-zA-Z0-9]{6})$")
+    url_match = url_extractor.match(input)
+    if url_match:
+        return url_match.group('id')
+
+    id_extractor = re.compile("^[a-zA-Z0-9]{6}$")
+    id_match = id_extractor.match(input)
+    if id_match:
+        return id_match.string
+
+    raise Exception("Invalid input ID/URL")
+
+
+def get(input):
     """ Retrieve a file from the service based on the provided URL. """
-    raise NotImplementedError()
+    id = _extract_id(input)
+    signed_url = _get_download_url(id)
+    with open(id, "wb") as file:
+        file.write(_download_file(signed_url))
