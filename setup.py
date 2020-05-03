@@ -10,5 +10,8 @@ setup(
     name='pigeon-cli',
     version='0.0.1',
     aution='Liam Doult',
-    install_requires=[],
+    install_requires=[
+        'click',     
+        'requests',
+    ],
 )
