@@ -9,7 +9,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='pigeon-cli',
-    version='0.0.1',
+    version='0.0.2',
     aution='Liam Doult',
     install_requires=[
         'click',
