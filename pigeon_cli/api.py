@@ -4,6 +4,8 @@ from typing import Tuple, BinaryIO
 
 import requests
 
+from . import errors
+
 API_URL = "https://europe-west2-sharebin-1584549443764.cloudfunctions.net/api"
 
 
@@ -14,7 +16,7 @@ def _download_file(signed_url: str) -> bytes:
     if result.status_code == 200:
         return result.content
 
-    raise Exception("Failed to download file!")
+    raise errors.DownloadException(result.status_code, result.content)
 
 
 def _extract_id(link: str) -> str:
@@ -33,7 +35,7 @@ def _extract_id(link: str) -> str:
     if id_match:
         return id_match.string
 
-    raise Exception("Invalid input ID/URL")
+    raise errors.InvalidIDExcpetion(link)
 
 
 def _get_download_url(file_id: str) -> str:
@@ -42,25 +44,23 @@ def _get_download_url(file_id: str) -> str:
     jsn = result.json()
 
     if result.status_code == 200:
-        signed_url = jsn['signedUrl'][0]
+        return jsn['signedUrl'][0]
 
-        return signed_url
+    if result.status_code == 404:
+        raise errors.DownloadNotFound(jsn['error'])
 
-    raise Exception(f"{jsn['error']}")
+    raise errors.DownloadException(result.status_code, result.content)
 
 
 def _get_upload_url() -> Tuple[str, str]:
     """ Authenticate the service and get the google file upload link. """
     result = requests.post(API_URL)
-    jsn = result.json()
 
     if result.status_code == 200:
-        file_id = jsn['id']
-        signed_url = jsn['signedUrl'][0]
+        jsn = result.json()
+        return jsn['id'], jsn['signedUrl'][0]
 
-        return file_id, signed_url
-
-    raise Exception(f"{jsn['error']}")
+    raise errors.UploadException(result.status_code, result.content)
 
 
 def _upload_file(signed_url: str, file: BinaryIO):
@@ -70,16 +70,21 @@ def _upload_file(signed_url: str, file: BinaryIO):
         raise Exception("Failed to upload file to server!")
 
 
-def get(link: str):
+def get(link: str) -> str:
     """ Retrieve a file from the service based on the provided URL.
 
     Args:
         link: The URL or ID used to reference the shared file.
+
+    Returns:
+        The name of the newly created file.
     """
     file_id = _extract_id(link)
     signed_url = _get_download_url(file_id)
+    downloaded_content = _download_file(signed_url)
     with open(file_id, "wb") as file:
-        file.write(_download_file(signed_url))
+        file.write(downloaded_content)
+    return file_id
 
 
 def share(file: BinaryIO) -> str:
