@@ -1,28 +1,44 @@
-""" Basic setup for Pigeon CLI """
-from os import path
 from setuptools import setup, find_packages
+from os import path
 
-here = path.abspath(path.dirname(__file__))
-
-with open(path.join(here, 'README.md'), encoding='utf-8') as f:
+setup_file_location = path.abspath(path.dirname(__file__))
+with open(path.join(setup_file_location, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
-test_dependencies = ['pytest']
-
 setup(
-    name='pigeon-cli',
-    version='0.0.2',
-    aution='Liam Doult',
-    packages=find_packages(),
+    name='pigeon-cli', # Change here
+    version='0.0.1',
+    description='',
+    long_description=long_description,
+    long_description_content_type='text/markdown',
+    url='https://github.com/LiamDoult/python-template',
+    author='Liam Doult',
+    author_email='liam.doult@gmail.com',
+    classifiers=[
+        'Development Status :: 3 - Alpha',
+        'Intended Audience :: Developers',
+        'Topic :: Software Development :: Build Tools',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3 :: Only',
+    ],
+    keywords='template repository development',
+    package_dir={'': 'src'},
+    packages=find_packages(where='src'),
     python_requires='>=3.7, < 4',
     install_requires=[
         'click',
         'requests',
     ],
-    tests_require=test_dependencies,
-    setup_requires=['pytest-runner'],
     extras_require={
-        'test': test_dependencies,
+        'dev': ['check-manifest'],
+        'test': [],
     },
-    test_suite='test',
+    project_urls={  # Optional
+        'Bug Reports': 'https://github.com/LiamDoult/pigeon-cli/issues',
+        'Source': 'https://github.com/LiamDoult/pigeon-cli/',
+    },
 )

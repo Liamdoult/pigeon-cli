@@ -128,5 +128,5 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-# Vim support
+# Vim Ignore
 *.swp
