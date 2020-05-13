@@ -4,7 +4,7 @@ from typing import Tuple, BinaryIO
 
 import requests
 
-from . import errors
+from pigeon_cli import errors
 
 API_URL = "https://europe-west2-sharebin-1584549443764.cloudfunctions.net/api"
 
@@ -41,12 +41,13 @@ def _extract_id(link: str) -> str:
 def _get_download_url(file_id: str) -> str:
     """ Authenticate the service and get the google file download link. """
     result = requests.get(f"{API_URL}?id={file_id}")
-    jsn = result.json()
 
     if result.status_code == 200:
+        jsn = result.json()
         return jsn['signedUrl'][0]
 
     if result.status_code == 404:
+        jsn = result.json()
         raise errors.DownloadNotFound(jsn['error'])
 
     raise errors.DownloadException(result.status_code, result.content)
@@ -65,9 +66,9 @@ def _get_upload_url() -> Tuple[str, str]:
 
 def _upload_file(signed_url: str, file: BinaryIO):
     """ Upload the provided file to the signed url returned by the server. """
-    results = requests.put(signed_url, data=file)
-    if results.status_code != 200:
-        raise Exception("Failed to upload file to server!")
+    result = requests.put(signed_url, data=file)
+    if result.status_code != 200:
+        raise errors.UploadException(result.status_code, result.content)
 
 
 def get(link: str) -> str:

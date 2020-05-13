@@ -7,7 +7,7 @@ with open(path.join(setup_file_location, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='pigeon-cli',
-    version='0.0.1',
+    version='0.0.3',
     description='',
     long_description=long_description,
     long_description_content_type='text/markdown',
